@@ -17,6 +17,7 @@ export function buildWebpack(options: BuildOptions): webpack.Configuration {
             path: paths.output,
             filename: '[name].[contenthash].js',
             clean: true,
+            publicPath: '/'
         },
         plugins: buildPlugins(options),
         module: {
@@ -24,6 +25,6 @@ export function buildWebpack(options: BuildOptions): webpack.Configuration {
         },
         resolve: buildResolvers(options),
         devtool: isDev ? 'eval-cheap-module-source-map' : 'source-map',
-        devServer: buildDevServer(options) //isDev && buildDevServer(options)
+        devServer: buildDevServer(options)
     }
 }

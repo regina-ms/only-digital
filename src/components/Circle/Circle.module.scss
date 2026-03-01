@@ -1,0 +1,43 @@
+.circle {
+  --diameter: 530px;
+  width: var(--diameter);
+  height: var(--diameter);
+  border-radius: 100%;
+  border: 1px solid #42567a33;
+  position: absolute;
+  left: 50%;
+  top: 215px;
+  transform: translateX(-50%);
+  transform-origin: center center;
+
+  .dot {
+    --size: 6px;
+    width: var(--size);
+    height: var(--size);
+    margin-top: calc(var(--size) / -2);
+    margin-left: calc(var(--size) / -2);
+    background: #42567a;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    cursor: pointer;
+
+    span {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    p {
+      position: absolute;
+      left: 100%;
+      transform: translateX(20px);
+      opacity: 0;
+      visibility: hidden;
+      font-weight: 700;
+    }
+  }
+}

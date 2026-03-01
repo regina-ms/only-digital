@@ -1,0 +1,25 @@
+.container {
+  position: absolute;
+  top: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: -1;
+  min-width: 973px;
+  justify-content: space-between;
+
+  span {
+    font-weight: 700;
+    font-size: 200px;
+    letter-spacing: -0.02;
+    line-height: 0.8;
+  }
+
+  .to {
+    color: #ef5da8;
+  }
+
+  .from {
+    color: #5D5FEF;
+  }
+}

@@ -1,11 +1,26 @@
-.test-button {
-    color: red;
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 60px;
+
+    .title {
+        position: relative;
+        max-width: 500px;
+        font-size: 56px;
+        font-weight: 700;
+        padding-left: 80px;
+
+        &::before {
+            content: '';
+            width: 5px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            background: linear-gradient(180deg, #3877EE 0%, #EF5DA8 100%);
+        }
+
+    }
 }
 
-.value {
-    font-size: 100px;
-}
 
-.icon {
-    color: red;
-}

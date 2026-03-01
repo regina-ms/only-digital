@@ -1,1 +1,44 @@
-import React, { useState } from 'react'/** начиная с 7 версии css-loader опция modules.namedExport является true по дефолту, поэтому нужно импортировать файл стилей так import * as classes from './App.module.scss', либо изменить эту опцию на false в конфиге и импортировать файл без звездочки, как раньше */import classes from './App.module.scss'import { Link } from 'react-router'import { About } from '@/pages/about/About'import PNG from '@/assets/png.png'import JPG from '@/assets/jpg.jpg'import Svg from '@/assets/svg.svg'function TODO() {    TODO2()}function TODO2() {    throw new Error('error')}export const App = () => {    const [count, setCount] = useState<number>(0)    const increment = () => {        //setCount(prev => prev + 1)        /** Для source-map */        TODO()    }    // if (__PLATFORM === 'desktop') {    //     return <div>ISDESKTOPPLATFORM</div>    // }    //    // if(__PLATFORM === 'mobile') {    //     return <div>ISMOBILEPLATFORM</div>    // }    return (<div data-testid={'App.DataTestId'}>        <h1 data-testid={'Platform'}>platform: {__PLATFORM}</h1>        <div>            gld            fghgfj            jfljlakjga            jfljlakjga            <img width={100} src={PNG} alt={''}/>            <img width={100} src={JPG} alt={''}/>        </div>        <div>            <Svg width={50} height={50} className={classes.icon} />        </div>        <Link to={'/about'}>about</Link>        <br/>        <Link to={'/shop'}>shop</Link>        <h1 className={classes.value}>{count}</h1>        <button className={classes.testButton} onClick={increment}>inc</button>        <About/>    </div>)}
+import Circle from "@/components/Circle/Circle"
+import CrossContainer from "@/components/CrossContainer/CrossContainer"
+import Years from "@/components/Years/Years"
+import { getYearRange } from "@/features/getYearRange"
+import { Data } from "@/index"
+import React, { useCallback, useEffect, useState } from "react"
+import styles from "./App.module.scss"
+
+type Props = {
+  data: Data[]
+}
+
+export const App = ({ data }: Props) => {
+  const [activeDataId, setActiveDataId] = useState<string>(data[0].id)
+  const [prevDataId, setPrevDataId] = useState<string>()
+
+  const getContent = useCallback(
+    (id: string) => {
+      return data.find((el) => el.id === id)?.content
+    },
+    [data],
+  )
+
+  const getPrevRange = useCallback(() => {
+    if (!prevDataId) return { from: 0, to: 0 }
+    const prevContent = getContent(prevDataId)
+    return getYearRange(prevContent)
+  }, [getContent, prevDataId])
+
+
+  return (
+    <div className={styles.mainContainer}>
+      <CrossContainer>
+        <h2 className={styles.title}>Исторические даты</h2>
+        <Circle
+          dots={data}
+          setActive={(id: string) => setActiveDataId(id)}
+          setPrev={(id: string) => setPrevDataId(id)}
+        />
+        <Years content={getContent(activeDataId)} prevRange={getPrevRange()} />
+      </CrossContainer>
+    </div>
+  )
+}
