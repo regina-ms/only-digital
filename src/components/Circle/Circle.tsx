@@ -1,3 +1,4 @@
+import Slider from '@/components/Slider/Slider'
 import { Data } from "@/index"
 import styles from "./Circle.module.scss"
 import { useGSAP } from "@gsap/react"
@@ -9,7 +10,6 @@ gsap.registerPlugin(useGSAP)
 type Props = {
   dots: Omit<Data, "content">[]
   setActive?: (id: string) => void
-  setPrev?: (id: string) => void
 }
 
 type DotRef = {
@@ -18,11 +18,11 @@ type DotRef = {
   activeAnimation?: gsap.core.Timeline
 }
 
-function Circle({ dots, setActive, setPrev }: Props) {
+function Circle({ dots, setActive }: Props) {
   const circle = useRef<HTMLDivElement>(null)
-  const wrapper = useRef<HTMLDivElement>(null)
+  const circleWrapper = useRef<HTMLDivElement>(null)
   const dotsRef = useRef<DotRef[]>([])
-  const clickedDotRef = useRef<DotRef>(null)
+  const activeDot = useRef<DotRef>(null)
 
   const getDotPosition = useCallback(
     ({ index, radius }: { index: number; radius: number; shift?: number }) => {
@@ -45,8 +45,8 @@ function Circle({ dots, setActive, setPrev }: Props) {
       const targetRotation = -dotAngle
 
       let diff = targetRotation - currentRotation
-      while (diff > 180) diff -= 360
-      while (diff < -180) diff += 360
+      if (diff > 180) diff -= 360
+      if (diff < -180) diff += 360
 
       return currentRotation + diff
     },
@@ -82,38 +82,11 @@ function Circle({ dots, setActive, setPrev }: Props) {
           .timeline({ paused: true })
           .to(name, { opacity: 1, visibility: "visible" })
       }
-
-      const radius = Number(gsap.getProperty(circle.current, "--diameter")) / 2
-
-      const onMouseEnter = contextSafe((e: MouseEvent) => {
-        const target = e.currentTarget as HTMLElement
-        const dot = dotsRef.current.find((refs) => refs.element === target)
-        dot.hoverAnimation?.play()
-      })
-
-      const onMouseLeave = contextSafe((e: MouseEvent) => {
-        const target = e.currentTarget as HTMLElement
-        if (target === clickedDotRef.current.element) return
-        const dot = dotsRef.current.find((refs) => refs.element === target)
-        dot.hoverAnimation?.reverse()
-      })
-
-      const onClick = contextSafe((e: MouseEvent) => {
-        const target = e.currentTarget as HTMLElement
-        const clickedDot = dotsRef.current.find(
-          (refs) => refs.element === target,
-        )
-
-        const clickedDotIndex = dotsRef.current.indexOf(clickedDot)
-        const currentActiveDotIndex = dotsRef.current.indexOf(
-          clickedDotRef.current,
-        )
-
-        if (clickedDotIndex === currentActiveDotIndex) {
-          return
-        }
-
-        const newRotation = getCircleRotation(clickedDotIndex)
+      const rotateCircleAnimation = (
+        newActiveDot: DotRef,
+        newActiveDotIndex: number,
+      ) => {
+        const newRotation = getCircleRotation(newActiveDotIndex)
 
         gsap.to(circle.current, {
           rotation: newRotation,
@@ -124,22 +97,63 @@ function Circle({ dots, setActive, setPrev }: Props) {
           duration: 0.6,
         })
 
-        clickedDot.activeAnimation.play()
-        clickedDotRef.current.hoverAnimation.reverse()
-        clickedDotRef.current.activeAnimation.reverse()
-        clickedDotRef.current = clickedDot
-        setActive(clickedDot.element.id)
-        setPrev(clickedDotRef.current.element.id)
+        newActiveDot.hoverAnimation.play()
+        newActiveDot.activeAnimation.play()
+        activeDot.current.hoverAnimation.reverse()
+        activeDot.current.activeAnimation.reverse()
+        setActive(newActiveDot.element.id)
+        activeDot.current = newActiveDot
+      }
+      const changeProgress = (targetIndex: number) => {
+        const currentProgress = parseInt(
+          document.querySelector(".currentDotIndex").textContent,
+        )
 
-        const fromIndex = { val: currentActiveDotIndex }
+        const newProgress = targetIndex + 1
+
+        const fromIndex = { val: currentProgress }
         gsap.to(fromIndex, {
-          val: clickedDotIndex,
+          val: newProgress,
           duration: 1,
           onUpdate: () => {
             document.querySelector(".currentDotIndex").textContent =
-              `0${clickedDotIndex + 1}`
+              `0${newProgress}`
           },
         })
+
+        document.querySelector<HTMLButtonElement>(".next").disabled =
+          newProgress === dotsRef.current.length
+        document.querySelector<HTMLButtonElement>(".prev").disabled =
+          newProgress === 1
+      }
+
+      const radius = Number(gsap.getProperty(circle.current, "--diameter")) / 2
+
+      const dotMouseEnterHandle = contextSafe((e: MouseEvent) => {
+        const target = e.currentTarget as HTMLElement
+        const dot = dotsRef.current.find((refs) => refs.element === target)
+        dot.hoverAnimation?.play()
+      })
+
+      const dotMouseLeaveHandle = contextSafe((e: MouseEvent) => {
+        const target = e.currentTarget as HTMLElement
+        if (target === activeDot.current.element) return
+        const dot = dotsRef.current.find((refs) => refs.element === target)
+        dot.hoverAnimation?.reverse()
+      })
+
+      const dotClickHandle = contextSafe((e: MouseEvent) => {
+        const target = e.currentTarget as HTMLElement
+        const newActiveDot = dotsRef.current.find(
+          (refs) => refs.element === target,
+        )
+        const newActiveDotIndex = dotsRef.current.indexOf(newActiveDot)
+        const currentActiveDotIndex = dotsRef.current.indexOf(activeDot.current)
+
+        if (newActiveDotIndex === currentActiveDotIndex) return
+
+        rotateCircleAnimation(newActiveDot, newActiveDotIndex)
+        changeProgress(newActiveDotIndex)
       })
 
       dotsRef.current = gsap.utils.toArray<HTMLElement>(".dot").map((el) => {
@@ -151,7 +165,7 @@ function Circle({ dots, setActive, setPrev }: Props) {
       })
 
       dotsRef.current.forEach((doteRef, index) => {
-        if (index === 0) clickedDotRef.current = doteRef
+        if (index === 0) activeDot.current = doteRef
 
         const { x, y } = getDotPosition({ index, radius })
         gsap.to(doteRef.element, {
@@ -160,60 +174,37 @@ function Circle({ dots, setActive, setPrev }: Props) {
           duration: 1,
           delay: 0.5,
           onComplete: () => {
-            clickedDotRef.current.hoverAnimation.play()
-            clickedDotRef.current.activeAnimation.play()
-            doteRef.element.addEventListener("mouseenter", onMouseEnter)
-            doteRef.element.addEventListener("mouseleave", onMouseLeave)
-            doteRef.element.addEventListener("click", onClick)
+            activeDot.current.hoverAnimation.play()
+            activeDot.current.activeAnimation.play()
+            doteRef.element.addEventListener("mouseenter", dotMouseEnterHandle)
+            doteRef.element.addEventListener("mouseleave", dotMouseLeaveHandle)
+            doteRef.element.addEventListener("click", dotClickHandle)
           },
         })
       })
 
-      const onNextClick = contextSafe((e: MouseEvent) => {
-        const nextIndex = dotsRef.current.indexOf(clickedDotRef.current) + 1
+      const nextButtonClickHandle = contextSafe(() => {
+        const nextIndex = dotsRef.current.indexOf(activeDot.current) + 1
         const nextDot = dotsRef.current[nextIndex]
-        const newRotation = getCircleRotation(nextIndex)
-
-        gsap.to(circle.current, {
-          rotation: newRotation,
-          duration: 0.6,
-        })
-        gsap.to(".dot", {
-          rotation: -newRotation,
-          duration: 0.6,
-        })
-
-        nextDot.hoverAnimation.play()
-        nextDot.activeAnimation.play()
-        clickedDotRef.current.hoverAnimation.reverse()
-        clickedDotRef.current.activeAnimation.reverse()
-        clickedDotRef.current = nextDot
-        setActive(nextDot.element.id)
-        setPrev(clickedDotRef.current.element.id)
-
-        const fromIndex = { val: nextIndex - 1 }
-        gsap.to(fromIndex, {
-          val: nextIndex,
-          duration: 1,
-          onUpdate: () => {
-            document.querySelector(".currentDotIndex").textContent =
-              `0${nextIndex + 1}`
-          },
-        })
-
-        if (nextIndex + 1 === dotsRef.current.length) {
-          const target = e.currentTarget as HTMLButtonElement
-          gsap.to(target, {
-            attr: {
-              disabled: "true",
-            },
-          })
-        }
+        rotateCircleAnimation(nextDot, nextIndex)
+        changeProgress(nextIndex)
       })
-      const nextButton = document.querySelector(".next")
-      nextButton.addEventListener("click", onNextClick)
+
+      const prevButtonClickHandle = contextSafe(() => {
+        const prevIndex = dotsRef.current.indexOf(activeDot.current) - 1
+        const prevDot = dotsRef.current[prevIndex]
+        rotateCircleAnimation(prevDot, prevIndex)
+        changeProgress(prevIndex)
+      })
+
+      document
+        .querySelector(".next")
+        .addEventListener("click", nextButtonClickHandle)
+      document
+        .querySelector(".prev")
+        .addEventListener("click", prevButtonClickHandle)
     },
-    { scope: wrapper },
+    { scope: circleWrapper },
   )
 
   const showDots = () => {
@@ -228,20 +219,24 @@ function Circle({ dots, setActive, setPrev }: Props) {
   }
 
   return (
-    <div className={`wrapper`} ref={wrapper}>
+    <div className={styles.wrapper} ref={circleWrapper}>
       <div className={`${styles.circle} circle`} ref={circle}>
         {showDots()}
       </div>
-      <div>
-        <div>
+
+      <div className={styles.navigation}>
+        <div className={styles.progress}>
           <span className={`currentDotIndex`}>01</span>
           <span>{`/0${dots.length}`}</span>
         </div>
-        <div>
-          <button className={`prev`}>Prev</button>
-          <button className={`next`}>Next</button>
+
+        <div className={styles.buttons}>
+          <button className={`prev`} disabled />
+          <button className={`${styles.next} next`} />
         </div>
       </div>
+
+
     </div>
   )
 }

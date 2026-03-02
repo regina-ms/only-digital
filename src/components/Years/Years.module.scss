@@ -1,25 +1,31 @@
-.container {
+.wrapper {
   position: absolute;
-  top: 400px;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0 60px;
+  min-height: 1080px;
+  padding : 400px 0 0;
   display: flex;
-  z-index: -1;
-  min-width: 973px;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 280px;
 
-  span {
-    font-weight: 700;
-    font-size: 200px;
-    letter-spacing: -0.02;
-    line-height: 0.8;
-  }
+  .container {
+    display: flex;
+    margin: 0 auto;
+    width: 973px;
+    justify-content: space-between;
 
-  .to {
-    color: #ef5da8;
-  }
+    span {
+      font-weight: 700;
+      font-size: 200px;
+      letter-spacing: -0.02%;
+      line-height: 0.8;
+    }
 
-  .from {
-    color: #5D5FEF;
+    .to {
+      color: #ef5da8;
+    }
+
+    .from {
+      color: #5d5fef;
+    }
   }
 }

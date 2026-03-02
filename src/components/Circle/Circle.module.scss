@@ -1,43 +1,100 @@
-.circle {
-  --diameter: 530px;
-  width: var(--diameter);
-  height: var(--diameter);
-  border-radius: 100%;
-  border: 1px solid #42567a33;
+.wrapper {
   position: absolute;
-  left: 50%;
-  top: 215px;
-  transform: translateX(-50%);
-  transform-origin: center center;
 
-  .dot {
-    --size: 6px;
-    width: var(--size);
-    height: var(--size);
-    margin-top: calc(var(--size) / -2);
-    margin-left: calc(var(--size) / -2);
-    background: #42567a;
-    border-radius: 50%;
+  inset: 215px 60px 295px;
+  z-index: 1;
+  //min-height: 1080px;
+
+  .circle {
+    --diameter: 530px;
+    width: var(--diameter);
+    height: var(--diameter);
+    border-radius: 100%;
+    border: 1px solid #42567a33;
     position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 50%;
+    //top: 215px;
     left: 50%;
-    cursor: pointer;
+    transform: translateX(-50%);
+    transform-origin: center center;
 
-    span {
-      opacity: 0;
-      visibility: hidden;
+    .dot {
+      --size: 6px;
+      width: var(--size);
+      height: var(--size);
+      margin-top: calc(var(--size) / -2);
+      margin-left: calc(var(--size) / -2);
+      background: #42567a;
+      border-radius: 50%;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 50%;
+      left: 50%;
+      cursor: pointer;
+
+      span {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      p {
+        position: absolute;
+        left: 100%;
+        transform: translateX(20px);
+        opacity: 0;
+        visibility: hidden;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .navigation {
+    position: absolute;
+    bottom: 0;
+    left: 80px;
+
+    .progress {
+      margin-bottom: 20px;
+
+      span {
+        font-size: 14px;
+      }
     }
 
-    p {
-      position: absolute;
-      left: 100%;
-      transform: translateX(20px);
-      opacity: 0;
-      visibility: hidden;
-      font-weight: 700;
+    .buttons {
+      display: flex;
+      gap: 20px;
+
+      button {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        border: 1px solid #303e5880;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:after {
+          content: "";
+          background-image: url("/public/assets/arrow.svg");
+          background-repeat: no-repeat;
+          background-size: auto;
+          background-position: center;
+          width: 15px;
+          height: 15px;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+        }
+      }
+
+      .next:after {
+        rotate: 180deg;
+      }
     }
   }
 }
