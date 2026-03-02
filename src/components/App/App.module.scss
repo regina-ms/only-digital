@@ -11,6 +11,7 @@
     font-size: 56px;
     font-weight: 700;
     padding-left: 80px;
+    line-height: 120%;
 
     &::before {
       content: "";
@@ -48,6 +49,27 @@
       height: 1px;
       top: 480px;
       left: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .container {
+    padding: 59px 20px;
+    min-height: 568px;
+    width: 100%;
+
+    .title {
+      padding-left: 0;
+      font-size: 20px;
+      max-width: 123px;
+      &:before {
+        content: none;
+      }
+    }
+
+    .cross {
+      display: none;
     }
   }
 }

@@ -34,18 +34,31 @@ function Slider({ content }: Props) {
     <div className={styles.wrapper} ref={slider}>
       <Swiper
         modules={[Navigation]}
-        slidesPerView={3}
-        spaceBetween={80}
+        slidesPerView={1.8}
+        spaceBetween={25}
         className={styles.slider}
         navigation={{ prevEl: ".slider-prev", nextEl: ".slider-next" }}
+        onSwiper={(swiper) => {
+          swiper.slides[swiper.activeIndex].style.opacity = "1"
+        }}
+        onSlideChange={(swiper) => {
+          swiper.slides.forEach((slide) => {
+            slide.style.opacity = "0.4"
+          })
+          swiper.slides[swiper.activeIndex].style.opacity = "1"
+        }}
+        breakpoints={{
+          1000: {
+            slidesPerView: 3,
+            spaceBetween: 80,
+          },
+        }}
       >
         {content.map((item) => {
           return (
-            <SwiperSlide>
-              <div className={styles.slide}>
-                <div className={styles.year}>{item.year}</div>
-                <div className={styles.text}>{item.text}</div>
-              </div>
+            <SwiperSlide className={styles.slide}>
+              <div className={styles.year}>{item.year}</div>
+              <div className={styles.text}>{item.text}</div>
             </SwiperSlide>
           )
         })}

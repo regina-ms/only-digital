@@ -48,12 +48,40 @@
   }
 
   .slide {
+    cursor: pointer;
     .year {
       color: #3877ee;
       text-transform: uppercase;
       font-family: "Bebas Neue", sans-serif;
       font-size: 25px;
       margin-bottom: 15px;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    padding: 20px 0 0;
+    border-top: 1px solid #c7cdd9;
+
+    .navigations {
+      display: none;
+    }
+
+    .slide {
+      opacity: 0.4;
+
+      .year {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .text {
+        font-size: 14px;
+      }
+    }
+
+    .slide.active {
+      opacity: 1;
     }
   }
 }

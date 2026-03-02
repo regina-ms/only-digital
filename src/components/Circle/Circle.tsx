@@ -1,4 +1,3 @@
-import Slider from '@/components/Slider/Slider'
 import { Data } from "@/index"
 import styles from "./Circle.module.scss"
 import { useGSAP } from "@gsap/react"
@@ -121,6 +120,13 @@ function Circle({ dots, setActive }: Props) {
           },
         })
 
+        const paginationDots =
+          gsap.utils.toArray<HTMLElement>(".pagination-dots")
+        paginationDots.forEach((dot) => {
+          dot.style.opacity = "0.4"
+        })
+        paginationDots[targetIndex].style.opacity = "1"
+
         document.querySelector<HTMLButtonElement>(".next").disabled =
           newProgress === dotsRef.current.length
         document.querySelector<HTMLButtonElement>(".prev").disabled =
@@ -225,18 +231,29 @@ function Circle({ dots, setActive }: Props) {
       </div>
 
       <div className={styles.navigation}>
-        <div className={styles.progress}>
-          <span className={`currentDotIndex`}>01</span>
-          <span>{`/0${dots.length}`}</span>
+        <div>
+          <div className={styles.progress}>
+            <span className={`currentDotIndex`}>01</span>
+            <span>{`/0${dots.length}`}</span>
+          </div>
+
+          <div className={styles.buttons}>
+            <button className={`prev`} disabled />
+            <button className={`${styles.next} next`} />
+          </div>
         </div>
 
-        <div className={styles.buttons}>
-          <button className={`prev`} disabled />
-          <button className={`${styles.next} next`} />
+        <div className={styles.pagination}>
+          {dots.map((_, index) => {
+            return (
+              <div
+                key={index}
+                className={`${styles.paginationDot} pagination-dots`}
+              />
+            )
+          })}
         </div>
       </div>
-
-
     </div>
   )
 }

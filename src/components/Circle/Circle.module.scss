@@ -96,5 +96,63 @@
         rotate: 180deg;
       }
     }
+
+    .pagination {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    inset: 0;
+
+    .navigation {
+      left: 20px;
+      bottom: 13px;
+      display: flex;
+      align-items: start;
+
+      .progress {
+        margin-bottom: 10px;
+      }
+
+      .buttons {
+        gap: 8px;
+
+        button {
+          width: 25px;
+          height: 25px;
+
+          &:after {
+            width: 8px;
+            height: 8px;
+          }
+        }
+      }
+
+      .pagination {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+        margin-left: 38px;
+
+        .paginationDot {
+          width: 6px;
+          height: 6px;
+          background-color: #42567a;
+          opacity: 0.4;
+          border-radius: 100%;
+
+          &:first-child {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    .circle {
+      display: none;
+    }
   }
 }

@@ -1,8 +1,7 @@
 .wrapper {
   position: absolute;
   inset: 0 60px;
-  min-height: 1080px;
-  padding : 400px 0 0;
+  padding: 400px 0 0;
   display: flex;
   flex-direction: column;
   gap: 280px;
@@ -26,6 +25,23 @@
 
     .from {
       color: #5d5fef;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    inset: 0 20px;
+    padding: 163px 0 0;
+    gap: 57px;
+
+    .container {
+      width: 100%;
+      max-width: 300px;
+
+      span {
+        font-size: 56px;
+      }
     }
   }
 }
