@@ -39,9 +39,11 @@ function Slider({ content }: Props) {
         className={styles.slider}
         navigation={{ prevEl: ".slider-prev", nextEl: ".slider-next" }}
         onSwiper={(swiper) => {
+          if (!window.matchMedia("(max-width:1000px").matches) return
           swiper.slides[swiper.activeIndex].style.opacity = "1"
         }}
         onSlideChange={(swiper) => {
+          if (!window.matchMedia("(max-width:1000px").matches) return
           swiper.slides.forEach((slide) => {
             slide.style.opacity = "0.4"
           })
